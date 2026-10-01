@@ -1,0 +1,30 @@
+[package]
+name = "relay"
+version = "0.1.0"
+edition = "2024"
+license = "MPL-2.0"
+
+[dependencies]
+anyhow = "1.0.104"
+async-trait = "0.1.92"
+clap = { version = "4.6.7", features = ["derive"] }
+dirs = "7.0.0"
+hex = "0.4.3"
+interprocess = { version = "2.4.4", features = ["tokio"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+sha2 = "0.11.0"
+thiserror = "2.0.21"
+tokio = { version = "1.53.1", features = ["full"] }
+tracing = "0.1.44"
+tracing-subscriber = "0.3.23"
+tungstenite = { version = "0.30.0", default-features = false, features = ["handshake"] }
+uuid = { version = "1.26.1", features = ["v4", "serde"] }
+
+[target."cfg(windows)".dependencies]
+uds_windows = "1.2.1"
+widestring = "1.2.1"
+windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_System_Threading", "Win32_System_Diagnostics_ToolHelp", "Win32_Security", "Win32_Security_Authorization", "Win32_System_Memory", "Win32_System_Console", "Win32_System_Pipes"] }
+
+[dev-dependencies]
+tempfile = "3.27.0"

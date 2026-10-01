@@ -1,0 +1,21 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo build --release
+      - run: cargo test
+      - run: cargo clippy --all-targets -- -D warnings
+      - run: gh release create "$env:GITHUB_REF_NAME" target/release/relay.exe --title "$env:GITHUB_REF_NAME" --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
