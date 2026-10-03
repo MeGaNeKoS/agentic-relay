@@ -1,38 +1,9 @@
-use std::sync::Mutex;
-
-use serde_json::{Value, json};
+use serde_json::json;
 
 use super::*;
 use crate::identity::{Identity, resolve_caller};
 use crate::transport::codex::jsonrpc::RpcError;
-use crate::transport::codex::{CallError, CodexApi};
-
-struct OneRead(Mutex<Option<Result<Value, CallError>>>);
-
-#[async_trait::async_trait]
-impl CodexApi for OneRead {
-    async fn call(&self, method: &str, _params: Value) -> Result<Value, CallError> {
-        assert_eq!(method, "thread/read");
-        self.0.lock().unwrap().take().expect("one read only")
-    }
-
-    async fn expect_turn_started(&self, _thread_id: &str) -> Result<crate::transport::codex::TurnStartedWaiter, CallError> {
-        unreachable!("identity checks never start turns")
-    }
-}
-
-struct NoCalls;
-
-#[async_trait::async_trait]
-impl CodexApi for NoCalls {
-    async fn call(&self, method: &str, _params: Value) -> Result<Value, CallError> {
-        panic!("unexpected call {method}");
-    }
-
-    async fn expect_turn_started(&self, _thread_id: &str) -> Result<crate::transport::codex::TurnStartedWaiter, CallError> {
-        unreachable!("identity checks never start turns")
-    }
-}
+use crate::transport::codex::CallError;
 
 fn under_daemon() -> FakeEnvironment {
     FakeEnvironment { chain: vec![ancestor(1, 10), ancestor(60, 600)], sessions: vec![], daemon: Some(ancestor(60, 600)) }
@@ -41,7 +12,7 @@ fn under_daemon() -> FakeEnvironment {
 #[tokio::test]
 async fn codex_caller_is_accepted_when_the_thread_exists() {
     let codex_api = OneRead(Mutex::new(Some(Ok(json!({"thread": {}})))));
-    let identity = resolve_caller(&[codex("t1")], 1, &under_daemon(), &codex_api).await.unwrap();
+    let identity = resolve_caller(&[codex("t1")], 1, &under_daemon(), &codex_api).await.unwrap().identity;
     assert_eq!(identity, Identity::Codex { thread_id: "t1".into() });
 }
 
@@ -63,6 +34,6 @@ async fn codex_caller_is_refused_when_the_daemon_cannot_be_asked() {
 #[tokio::test]
 async fn claude_caller_needs_no_daemon_call() {
     let env = FakeEnvironment { chain: vec![ancestor(1, 10), ancestor(50, 500)], sessions: vec![session(50, "s1", 500)], daemon: None };
-    let identity = resolve_caller(&[claude(50, "s1")], 1, &env, &NoCalls).await.unwrap();
+    let identity = resolve_caller(&[claude(50, "s1")], 1, &env, &NoCalls).await.unwrap().identity;
     assert_eq!(identity, Identity::Claude { session_id: "s1".into() });
 }

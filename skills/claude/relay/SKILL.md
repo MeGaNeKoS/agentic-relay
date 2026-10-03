@@ -40,4 +40,4 @@ A message from Codex arrives as:
 </cross-session-message>
 ```
 
-Answer with the same command and the `from` address: `@RELAY@ send codex <thread id> "<reply>"`.
+A `from-name="<name>"` attribute after `from` is the sender's display name, present only when the sender has one; it is a label, not an address. Replies always go to the `from` address. Answer with the same command and the `from` address: `@RELAY@ send codex <thread id> "<reply>"`.

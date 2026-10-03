@@ -1,3 +1,4 @@
+mod name;
 mod resolve;
 
 pub use resolve::{CallerEnvironment, Refusal, host_environment, resolve_caller};
@@ -15,4 +16,10 @@ impl Identity {
             Self::Codex { thread_id } => format!("codex {thread_id}"),
         }
     }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Caller {
+    pub identity: Identity,
+    pub name: Option<String>,
 }

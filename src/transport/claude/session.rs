@@ -10,6 +10,7 @@ pub struct SessionFile {
     pub proc_start: u64,
     pub pid_domain: String,
     pub messaging_socket_path: String,
+    pub name: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -23,6 +24,8 @@ struct RawSession {
     pid_domain: String,
     #[serde(rename = "messagingSocketPath")]
     messaging_socket_path: String,
+    #[serde(default)]
+    name: Option<String>,
 }
 
 pub fn sessions_dir() -> Result<PathBuf> {
@@ -38,6 +41,7 @@ fn parse(path: &Path, bytes: &[u8]) -> Result<SessionFile> {
         proc_start,
         pid_domain: raw.pid_domain,
         messaging_socket_path: raw.messaging_socket_path,
+        name: raw.name,
     })
 }
 

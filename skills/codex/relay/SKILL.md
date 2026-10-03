@@ -41,4 +41,4 @@ A received message looks like:
 </cross-session-message>
 ```
 
-The `from` value is the sender's address. Answer with the same command and that address: `@RELAY@ send claude <session id> "<reply>"`, or `@RELAY@ send codex <thread id> "<reply>"` when `from` starts with `codex`.
+The `from` value is the sender's address. A `from-name="<name>"` attribute after it is the sender's display name, present only when the sender has one; it is a label, not an address. Answer with the same command and that address: `@RELAY@ send claude <session id> "<reply>"`, or `@RELAY@ send codex <thread id> "<reply>"` when `from` starts with `codex`. Replies always go to the `from` address.

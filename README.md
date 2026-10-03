@@ -1,6 +1,6 @@
 # relay
 
-relay lets a Claude Code session or a Codex thread send a text message to any other Claude Code session or Codex thread of the same user on this machine. There is one operation, `send`. relay delivers the message, reports whether it was delivered, and does nothing afterward: it stores no messages, follows no replies, and never resends. The receiver answers by sending a message back to the address printed at the top of every message it receives.
+relay lets a Claude Code session or a Codex thread send a text message to any other Claude Code session or Codex thread of the same user on this machine. There is one operation, `send`. relay delivers the message, reports whether it was delivered, and does nothing afterward: it stores no messages, follows no replies, and never resends. The receiver answers by sending a message back to the `from` address printed at the top of every message it receives. When the sender has a display name, the message also carries it as `from-name`; the name is only a label and never the reply address.
 
 For installing, starting, stopping and the command reference, see [docs/USAGE.md](docs/USAGE.md).
 

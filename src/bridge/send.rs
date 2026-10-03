@@ -5,7 +5,7 @@ use uuid::Uuid;
 
 use super::{Bridge, codex_create, codex_deliver, codex_resolve};
 use crate::frame;
-use crate::identity::{Identity, Refusal, resolve_caller};
+use crate::identity::{Caller, Identity, Refusal, resolve_caller};
 use crate::outcome::Outcome;
 use crate::protocol::{Candidate, Target};
 use crate::transport::claude;
@@ -38,12 +38,12 @@ impl Bridge {
         if text.is_empty() {
             return Outcome::failed("the message is empty");
         }
-        let sender = match resolve_caller(candidates, cli_pid, &*self.env, &*self.codex).await {
-            Ok(sender) => sender,
+        let Caller { identity: sender, name } = match resolve_caller(candidates, cli_pid, &*self.env, &*self.codex).await {
+            Ok(resolved) => resolved,
             Err(Refusal(reason)) => return Outcome::failed(reason),
         };
         *caller = Some(sender.clone());
-        let frame = frame::render(message_id, &sender, text);
+        let frame = frame::render(message_id, &sender, name.as_deref(), text);
 
         match target {
             Target::Claude { session_id } => {

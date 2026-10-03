@@ -8,6 +8,7 @@ mod lookup_found;
 mod lookup_refused;
 mod relative_cwd_refused;
 mod send_delivered;
+mod send_from_name;
 mod send_refused;
 mod serve_wire;
 
@@ -144,6 +145,7 @@ impl CallerEnvironment for ClaudeCallerEnvironment {
             proc_start: 500,
             pid_domain: "win32:test".to_string(),
             messaging_socket_path: String::new(),
+            name: None,
         }))
     }
 

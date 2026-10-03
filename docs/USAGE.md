@@ -118,7 +118,9 @@ Failure reasons you will meet:
 </cross-session-message>
 ```
 
-`from` is the sender's address: pass it to `relay send` to answer.
+`from` is the sender's address: pass it to `relay send` to answer. When the sender has a display name, a `from-name="<name>"` attribute follows `from`; it is absent when the sender has none. Replies always go to the `from` address, never to the name.
+
+relay reads the name on every send: from the `name` field of the Claude Code session file `~/.claude/sessions/<pid>.json`, or from the Codex `thread/read` answer (`thread.name`, or `thread.agentNickname` when the thread has no name). It removes `"`, `<`, `>` and control, format, line separator and paragraph separator characters, trims the result, and cuts a name longer than 64 characters to its first 64 followed by `…`. A name that is empty after cleaning is omitted.
 
 Into a Codex thread the message starts a turn on an idle thread, is steered into a running turn, or is queued behind a turn that cannot be steered. Into a Claude Code session it is written to the session's inbox pipe, and relay gets no acknowledgment, so `delivered` there means written. relay never waits for the receiver to act and never reports what it does with the message.
 
